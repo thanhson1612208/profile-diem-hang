@@ -4,75 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Aesthetic Bio</title>
-    <!-- Nhúng Tailwind CSS để căn chỉnh nhanh -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Nhúng font chữ nghệ thuật giống ảnh mẫu -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&family=Inter:wght@300;400;600&display=swap');
         .font-aesthetic { font-family: 'Playfair Display', serif; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
-        /* Tạo hiệu ứng xoay cho đĩa nhạc */
+        body { font-family: 'Inter', sans-serif; background-color: #0d0d0d; }
+        /* Hiệu ứng đĩa nhạc xoay chậm */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-slow { animation: spin 8s linear infinite; }
     </style>
 </head>
 <body class="relative min-h-screen text-zinc-300 flex flex-col items-center justify-start py-16 px-4 overflow-x-hidden">
 
-    <!-- CANVAS LÀM HIỆU ỨNG MƯA RƠI NỀN -->
-    <canvas id="rainCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+    <canvas id="snowCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
 
-    <!-- KHUNG CHỨA NỘI DUNG CHÍNH (Z-10 để nổi lên trên nền mưa) -->
     <div class="relative z-10 w-full max-w-md flex flex-col items-center gap-6 text-center">
         
-        <!-- 1. KHUNG ẢNH ĐẠI DIỆN HÀO QUANG (Giống ảnh 1000092233_3.jpg) -->
-        <div class="relative w-28 h-28 rounded-full p-1 bg-gradient-to-b from-amber-200 via-yellow-400 to-transparent shadow-[0_0_20px_rgba(250,204,21,0.4)]">
+        <div class="relative w-28 h-28 rounded-full p-1 bg-gradient-to-b from-amber-200 via-yellow-400 to-transparent shadow-[0_0_20px_rgba(250,204,21,0.4)] mt-4">
             <img src="https://i.pinimg.com/736x/87/42/11/874211cb1e0bdfbdf60e15bc963b5fb3.jpg" class="w-full h-full object-cover rounded-full" alt="Avatar">
         </div>
 
-        <!-- TÊN CHỮ NGHỆ THUẬT -->
         <h1 class="text-4xl font-aesthetic text-zinc-100 tracking-wide mt-2">kyle</h1>
 
-        <!-- ICON MẠNG XÃ HỘI NHỎ -->
         <div class="flex gap-4 text-zinc-500 text-sm my-1">
             <span>🌐 discord</span>
             <span>🎵 spotify</span>
         </div>
 
-        <!-- 2. KHUNG TIỂU SỬ ABOUT ME (Giống ảnh 1000092234_3.jpg) -->
-        <div class="w-full mt-4">
+        <div class="w-full mt-2">
             <p class="text-xs tracking-widest text-zinc-500 uppercase font-semibold mb-1">About Me</p>
             <p class="font-aesthetic text-lg text-zinc-400 italic">"i miss u, i miss our dream, i miss everything..."</p>
         </div>
 
-        <!-- 3. KHUNG HIỂN THỊ STATUS DISCORD (Giao diện Bo góc, mờ đục) -->
-        <div class="w-full bg-zinc-900/40 backdrop-blur-md border border-zinc-800/50 rounded-2xl p-4 flex items-center gap-4 text-left">
+        <div class="w-full bg-zinc-900/50 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex items-center gap-4 text-left shadow-lg">
             <div class="relative w-12 h-12 rounded-full bg-zinc-800 flex-shrink-0">
                 <img src="https://i.pinimg.com/736x/87/42/11/874211cb1e0bdfbdf60e15bc963b5fb3.jpg" class="rounded-full w-full h-full" alt="Discord Status">
                 <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-zinc-900 rounded-full"></div>
             </div>
             <div class="flex-1">
-                <p class="text-xxs uppercase tracking-wider text-zinc-500 font-bold">Discord</p>
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Discord</p>
                 <h2 class="text-sm font-semibold text-zinc-200">kyle</h2>
                 <p class="text-xs text-zinc-400">do not disturb</p>
             </div>
         </div>
 
-        <!-- 4. KHUNG TRÌNH PHÁT NHẠC CUSTOM (Giống ảnh 1000092234_3.jpg) -->
-        <div class="w-full bg-zinc-900/40 backdrop-blur-md border border-zinc-800/50 rounded-2xl p-4 flex flex-col gap-3">
+        <div class="w-full bg-zinc-900/50 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
             <div class="flex items-center gap-4 text-left">
-                <!-- Đĩa nhạc xoay xoay -->
                 <img src="https://i.pinimg.com/736x/e2/a0/2d/e2a02d4d775626e23e0c06f74a001851.jpg" class="w-14 h-14 rounded-full object-cover animate-spin-slow border-2 border-zinc-700" alt="Vinyl">
                 <div>
-                    <p class="text-xxs uppercase tracking-wider text-zinc-500 font-bold">Now Playing</p>
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Now Playing</p>
                     <h3 class="text-sm font-semibold text-zinc-200">Tell Em - Instrumental</h3>
                     <p class="text-xs text-zinc-400">Cochise</p>
                 </div>
             </div>
-            <!-- Thanh thời gian chạy thử -->
             <div class="w-full bg-zinc-800 h-1 rounded-full relative overflow-hidden">
                 <div class="bg-zinc-400 h-full w-1/3 rounded-full"></div>
             </div>
-            <div class="flex justify-between text-xxs text-zinc-500">
+            <div class="flex justify-between text-[10px] text-zinc-500">
                 <span>1:51</span>
                 <span>3:53</span>
             </div>
@@ -80,9 +68,8 @@
 
     </div>
 
-    <!-- JAVASCRIPT XỬ LÝ HIỆU ỨNG MƯA RƠI TRÊN CANVAS -->
     <script>
-        const canvas = document.getElementById('rainCanvas');
+        const canvas = document.getElementById('snowCanvas');
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
@@ -92,38 +79,53 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        const maxDrops = 100;
-        const drops = [];
+        // Tạo danh sách các hạt tuyết
+        const maxFlakes = 60; // Số lượng hạt tuyết trên màn hình cùng lúc
+        const flakes = [];
 
-        for (let i = 0; i < maxDrops; i++) {
-            drops.push({
+        for (let i = 0; i < maxFlakes; i++) {
+            flakes.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                length: Math.random() * 20 + 10,
-                speed: Math.random() * 4 + 4
+                radius: Math.random() * 3 + 1, // Độ to nhỏ của hạt tuyết (1px - 4px)
+                density: Math.random() * maxFlakes,
+                opacity: Math.random() * 0.6 + 0.2 // Độ mờ ảo của hạt
             });
         }
 
-        function drawRain() {
+        // Hàm vẽ và làm tuyết rơi chuyển động
+        function drawSnow() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'rgba(156, 163, 175, 0.3)'; // Màu hạt mưa
-            ctx.lineWidth = 1;
-
-            drops.forEach(drop => {
+            
+            flakes.forEach(flake => {
                 ctx.beginPath();
-                ctx.moveTo(drop.x, drop.y);
-                ctx.lineTo(drop.x, drop.y + drop.length);
-                ctx.stroke();
+                // Tạo màu trắng mờ cho tuyết
+                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
+                // Vẽ hạt tuyết hình tròn
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2, true);
+                ctx.fill();
 
-                drop.y += drop.speed;
-                if (drop.y > canvas.height) {
-                    drop.y = -drop.length;
-                    drop.x = Math.random() * canvas.width;
+                // Cập nhật vị trí để hạt tuyết rơi xuống và đung đưa qua lại
+                flake.y += Math.random() * 1 + 0.5; // Tốc độ rơi chậm rãi
+                flake.x += Math.sin(flake.density) * 0.5; // Đung đưa sang trái/phải bằng hàm Sin
+                flake.density += 0.01;
+
+                // Nếu hạt tuyết rơi quá đáy màn hình thì cho xuất hiện lại ở trên đỉnh
+                if (flake.y > canvas.height) {
+                    flake.y = -10;
+                    flake.x = Math.random() * canvas.width;
+                }
+                // Nếu trôi quá lề màn hình
+                if (flake.x > canvas.width || flake.x < 0) {
+                    flake.x = Math.random() * canvas.width;
                 }
             });
-            requestAnimationFrame(drawRain);
+
+            requestAnimationFrame(drawSnow);
         }
-        drawRain();
+
+        // Bắt đầu chạy hiệu ứng
+        drawSnow();
     </script>
 </body>
 </html>
