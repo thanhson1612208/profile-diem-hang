@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin — Playlist Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080809;
+      --surface:#111113;
+      --surface2:#18181b;
+      --border:rgba(255,255,255,0.08);
+      --border2:rgba(255,255,255,0.13);
+      --text:rgba(255,255,255,0.88);
+      --muted:rgba(255,255,255,0.38);
+      --accent:#6366f1;
+      --accent-glow:rgba(99,102,241,0.25);
+      --red:#ef4444;
+      --green:#22c55e;
+      --gold:#f0c040;
+      --r:12px;
+    }
+    html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;}
+
+    /* ── LOGIN GATE ── */
+    #gate{
+      position:fixed;inset:0;z-index:999;
+      background:var(--bg);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+    }
+    #gate.hide{display:none}
+    .gate-logo{
+      font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;
+      color:var(--muted);margin-bottom:32px;
+    }
+    .gate-title{
+      font-size:22px;font-weight:400;color:var(--text);margin-bottom:8px;text-align:center;
+    }
+    .gate-sub{font-size:13px;color:var(--muted);margin-bottom:32px;text-align:center;}
+    .gate-box{
+      background:var(--surface);border:1px solid var(--border2);
+      border-radius:var(--r);padding:28px;width:320px;
+      display:flex;flex-direction:column;gap:14px;
+    }
+    .gate-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+    .gate-input{
+      width:100%;padding:10px 14px;
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;
+      outline:none;transition:border-color .2s;
+    }
+    .gate-input:focus{border-color:var(--accent);}
+    .btn{
+      padding:10px 20px;border-radius:8px;border:none;cursor:pointer;
+      font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;
+      transition:opacity .15s,transform .15s;
+    }
+    .btn:hover{opacity:.85;transform:translateY(-1px)}
+    .btn:active{transform:none}
+    .btn-primary{background:var(--accent);color:#fff;width:100%;padding:12px;}
+    .btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+    .btn-ghost{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+    .btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+    .gate-err{font-size:12px;color:var(--red);text-align:center;display:none;}
+    .gate-err.show{display:block}
+
+    /* ── LAYOUT ── */
+    #app{display:none;min-height:100vh;}
+    #app.show{display:flex;flex-direction:column;}
+
+    /* TOPBAR */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(8,8,9,.88);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      padding:0 24px;height:56px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .topbar-badge{
+      font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;
+      color:var(--muted);
+    }
+    .topbar-title{font-size:15px;font-weight:500;color:var(--text);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .topbar-link{
+      font-size:12px;color:var(--muted);text-decoration:none;
+      padding:6px 12px;border-radius:6px;border:1px solid var(--border);
+      transition:border-color .2s,color .2s;
+    }
+    .topbar-link:hover{border-color:var(--border2);color:var(--text);}
+
+    /* MAIN */
+    .main{flex:1;padding:32px 24px 60px;max-width:820px;margin:0 auto;width:100%;}
+
+    /* SECTION HEADER */
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .sec-title{font-size:13px;font-weight:500;color:var(--text);letter-spacing:.5px;}
+    .sec-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .badge-count{
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:20px;padding:2px 10px;font-size:11px;color:var(--muted);
+      font-family:'Space Mono',monospace;
+    }
+
+    /* ADD FORM */
+    .add-form{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r);padding:20px;margin-bottom:28px;
+    }
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+    .form-group{display:flex;flex-direction:column;gap:6px;}
+    .form-group.full{grid-column:1/-1;}
+    .form-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+    .form-input{
+      padding:9px 13px;
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+      outline:none;transition:border-color .2s;
+    }
+    .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+    .form-input::placeholder{color:var(--muted);}
+    .form-hint{font-size:10px;color:var(--muted);margin-top:2px;}
+    .form-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:10px;flex-wrap:wrap;}
+    .form-footer-left{font-size:11px;color:var(--muted);}
+
+    /* PLAYLIST TABLE */
+    .pl-list{display:flex;flex-direction:column;gap:8px;}
+    .pl-item{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r);padding:14px 16px;
+      display:flex;align-items:center;gap:14px;
+      transition:border-color .2s,transform .15s;
+      cursor:grab;
+      position:relative;
+    }
+    .pl-item:hover{border-color:var(--border2);transform:translateY(-1px);}
+    .pl-item.dragging{opacity:.5;border-color:var(--accent);transform:scale(.98);}
+    .pl-item.drag-over{border-color:var(--accent);background:rgba(99,102,241,.06);}
+
+    .pl-num{
+      font-family:'Space Mono',monospace;font-size:11px;
+      color:var(--muted);width:22px;text-align:center;flex-shrink:0;
+    }
+    .pl-cover{
+      width:44px;height:44px;border-radius:8px;flex-shrink:0;
+      background:var(--surface2);overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .pl-cover img{width:44px;height:44px;object-fit:cover;border-radius:8px;}
+    .pl-cover-placeholder{
+      width:44px;height:44px;border-radius:8px;
+      background:linear-gradient(135deg,var(--surface2),var(--bg));
+      display:flex;align-items:center;justify-content:center;
+    }
+    .pl-cover-placeholder svg{width:18px;height:18px;fill:rgba(255,255,255,.2);}
+    .pl-info{flex:1;min-width:0;}
+    .pl-title{font-size:14px;font-weight:400;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .pl-artist{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .pl-src{font-size:10px;color:rgba(99,102,241,.7);margin-top:3px;font-family:'Space Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .pl-actions{display:flex;gap:6px;flex-shrink:0;}
+    .pl-btn{
+      width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+      background:transparent;color:var(--muted);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .15s,border-color .15s,color .15s;
+    }
+    .pl-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2);}
+    .pl-btn.del:hover{border-color:rgba(239,68,68,.3);color:var(--red);background:rgba(239,68,68,.08);}
+    .pl-btn svg{width:13px;height:13px;fill:currentColor;pointer-events:none;}
+    .drag-handle{cursor:grab;color:var(--muted);}
+    .drag-handle svg{width:14px;height:14px;fill:currentColor;}
+
+    /* INLINE EDIT */
+    .pl-item.editing .pl-info{display:none}
+    .pl-edit-fields{display:none;flex:1;gap:8px;flex-wrap:wrap;}
+    .pl-item.editing .pl-edit-fields{display:flex;}
+    .pl-edit-input{
+      flex:1;min-width:100px;padding:6px 10px;
+      background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+      color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;
+    }
+    .pl-edit-input:focus{border-color:var(--accent);}
+
+    /* EMPTY STATE */
+    .empty{
+      text-align:center;padding:48px 24px;
+      border:1px dashed var(--border);border-radius:var(--r);
+      color:var(--muted);font-size:13px;
+    }
+    .empty svg{width:36px;height:36px;fill:rgba(255,255,255,.1);display:block;margin:0 auto 12px;}
+
+    /* TOAST */
+    #toast{
+      position:fixed;bottom:28px;right:24px;z-index:9999;
+      background:var(--surface);border:1px solid var(--border2);
+      border-radius:10px;padding:12px 18px;
+      font-size:13px;color:var(--text);
+      display:flex;align-items:center;gap:10px;
+      transform:translateY(80px);opacity:0;
+      transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .3s;
+      pointer-events:none;max-width:320px;
+    }
+    #toast.show{transform:none;opacity:1;}
+    #toast .toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    #toast.ok .toast-dot{background:var(--green);}
+    #toast.err .toast-dot{background:var(--red);}
+
+    /* STATS BAR */
+    .stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+      margin-bottom:28px;
+    }
+    .stat-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r);padding:16px;
+    }
+    .stat-val{font-size:24px;font-weight:400;color:var(--text);}
+    .stat-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+    /* DIVIDER */
+    .divider{height:1px;background:var(--border);margin:28px 0;}
+
+    /* PREVIEW PLAYER */
+    #preview{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r);padding:14px 16px;
+      display:flex;align-items:center;gap:14px;
+      margin-bottom:28px;
+    }
+    .prev-art{
+      width:40px;height:40px;border-radius:8px;flex-shrink:0;
+      background:var(--surface2);overflow:hidden;
+    }
+    .prev-art img{width:40px;height:40px;object-fit:cover;border-radius:8px;}
+    .prev-info{flex:1;min-width:0;}
+    .prev-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+    .prev-title{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .prev-artist{font-size:11px;color:var(--muted);}
+    .prev-bar{height:2px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:6px;cursor:pointer;}
+    .prev-fill{height:100%;width:0%;background:rgba(255,255,255,.45);border-radius:2px;}
+    .prev-ctrl{display:flex;gap:8px;flex-shrink:0;}
+    .prev-btn{
+      width:30px;height:30px;border-radius:50%;border:none;background:transparent;
+      color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:color .15s;padding:0;
+    }
+    .prev-btn:hover{color:var(--text);}
+    .prev-btn svg{width:13px;height:13px;fill:currentColor;}
+    .prev-play{width:34px;height:34px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div id="gate">
+  <div class="gate-logo">ADMIN PANEL</div>
+  <div class="gate-title">Playlist Manager</div>
+  <div class="gate-sub">Nhập mật khẩu để vào trang quản lý</div>
+  <div class="gate-box">
+    <div>
+      <div class="gate-label">Mật khẩu</div>
+      <input type="password" class="gate-input" id="pwInput" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn btn-primary" id="loginBtn">Đăng nhập</button>
+    <div class="gate-err" id="gateErr">Mật khẩu không đúng</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-badge">ADMIN</div>
+      <div class="topbar-title">Playlist Manager</div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="topbar-link">← Back to site</a>
+      <button class="btn btn-ghost" id="logoutBtn" style="font-size:12px;padding:6px 12px;">Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-val" id="statCount">0</div>
+        <div class="stat-lbl">Bài hát</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statArtists">0</div>
+        <div class="stat-lbl">Nghệ sĩ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statSaved" style="font-size:13px;padding-top:4px;">—</div>
+        <div class="stat-lbl">Lưu lần cuối</div>
+      </div>
+    </div>
+
+    <!-- MINI PREVIEW PLAYER -->
+    <div id="preview">
+      <div class="prev-art"><img id="prevArt" src="" alt="" style="display:none"/></div>
+      <div class="prev-info">
+        <div class="prev-lbl">Preview</div>
+        <div class="prev-title" id="prevTitle">—</div>
+        <div class="prev-artist" id="prevArtist">chọn bài để preview</div>
+        <div class="prev-bar" id="prevBar"><div class="prev-fill" id="prevFill"></div></div>
+      </div>
+      <div class="prev-ctrl">
+        <button class="prev-btn" id="prevPrev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+        <button class="prev-btn prev-play" id="prevPlay">
+          <svg id="pvPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="pvPause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="prev-btn" id="prevNext"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg></button>
+      </div>
+    </div>
+
+    <!-- ADD FORM -->
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">Thêm bài hát mới</div>
+        <div class="sec-sub">Nhập thông tin bài hát — file nhạc upload lên thư mục <code style="font-family:'Space Mono';font-size:10px;color:rgba(99,102,241,.8);">music/</code></div>
+      </div>
+    </div>
+
+    <div class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Tên bài hát *</label>
+          <input class="form-input" id="fTitle" placeholder="Tell Em - Instrumental"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nghệ sĩ *</label>
+          <input class="form-input" id="fArtist" placeholder="Cochise"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Đường dẫn file nhạc *</label>
+          <input class="form-input" id="fSrc" placeholder="music/ten-bai.mp3"/>
+          <div class="form-hint">Tương đối từ thư mục gốc: music/bai.mp3 hoặc URL đầy đủ</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ảnh bìa (tùy chọn)</label>
+          <input class="form-input" id="fCover" placeholder="music/cover.jpg hoặc URL ảnh"/>
+        </div>
+      </div>
+      <div class="form-footer">
+        <div class="form-footer-left">* bắt buộc — Thay đổi sẽ tự lưu khi bấm Thêm hoặc Lưu</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" id="clearForm">Xóa form</button>
+          <button class="btn btn-primary" id="addBtn">+ Thêm bài</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PLAYLIST LIST -->
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">Danh sách bài hát</div>
+        <div class="sec-sub">Kéo thả để sắp xếp thứ tự · Click ✏️ để chỉnh sửa inline</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="badge-count" id="countBadge">0 bài</span>
+        <button class="btn btn-success" id="saveBtn">💾 Lưu thay đổi</button>
+        <button class="btn btn-danger" id="clearAllBtn">Xóa hết</button>
+      </div>
+    </div>
+
+    <div class="pl-list" id="plList"></div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><div class="toast-dot"></div><span id="toastMsg"></span></div>
+
+<script>
+// ═══ CONFIG ═══════════════════════════════
+const ADMIN_PASSWORD = 'admin123'; // ← ĐỔI MẬT KHẨU CỦA BẠN Ở ĐÂY
+const STORAGE_KEY    = '__playlist';
+const SESSION_KEY    = '__admin_ok';
+// ══════════════════════════════════════════
+
+// ── AUTH
+const gate = document.getElementById('gate');
+const appEl = document.getElementById('app');
+
+function checkSession(){
+  return sessionStorage.getItem(SESSION_KEY) === '1';
+}
+function login(pw){
+  if(pw === ADMIN_PASSWORD){
+    sessionStorage.setItem(SESSION_KEY,'1');
+    gate.classList.add('hide');
+    appEl.classList.add('show');
+    init();
+    return true;
+  }
+  return false;
+}
+function logout(){
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+document.getElementById('loginBtn').addEventListener('click',()=>{
+  const pw = document.getElementById('pwInput').value;
+  if(!login(pw)){
+    document.getElementById('gateErr').classList.add('show');
+    document.getElementById('pwInput').style.borderColor='var(--red)';
+  }
+});
+document.getElementById('pwInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('pwInput').addEventListener('input',()=>{
+  document.getElementById('gateErr').classList.remove('show');
+  document.getElementById('pwInput').style.borderColor='';
+});
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+if(checkSession()){ gate.classList.add('hide'); appEl.classList.add('show'); init(); }
+
+// ── TOAST
+function toast(msg, type='ok'){
+  const el=document.getElementById('toast');
+  el.className=''; el.classList.add('show',type);
+  document.getElementById('toastMsg').textContent=msg;
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ── PLAYLIST STATE
+let playlist = [];
+
+function loadPlaylist(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  playlist = raw ? JSON.parse(raw) : [
+    { title:'Tell Em - Instrumental', artist:'Cochise', src:'music/tell-em.mp3', cover:'' }
+  ];
+}
+
+function savePlaylist(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(playlist));
+  localStorage.setItem('__playlist_saved', new Date().toLocaleTimeString('vi-VN'));
+  updateStats();
+  toast('Đã lưu playlist ✓');
+}
+
+function updateStats(){
+  document.getElementById('statCount').textContent = playlist.length;
+  document.getElementById('statArtists').textContent = new Set(playlist.map(t=>t.artist).filter(Boolean)).size;
+  const saved = localStorage.getItem('__playlist_saved');
+  document.getElementById('statSaved').textContent = saved||'—';
+  document.getElementById('countBadge').textContent = playlist.length+' bài';
+}
+
+// ── RENDER
+let dragSrc = null;
+
+function render(){
+  const list = document.getElementById('plList');
+  if(!playlist.length){
+    list.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>Chưa có bài nào. Thêm bài hát ở phía trên!</div>`;
+    return;
+  }
+  list.innerHTML='';
+  playlist.forEach((t,i)=>{
+    const item = document.createElement('div');
+    item.className='pl-item';
+    item.draggable=true;
+    item.dataset.idx=i;
+    item.innerHTML=`
+      <div class="drag-handle pl-btn" title="Kéo để sắp xếp">
+        <svg viewBox="0 0 24 24"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      </div>
+      <div class="pl-num">${i+1}</div>
+      <div class="pl-cover">
+        ${t.cover
+          ? `<img src="${t.cover}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="pl-cover-placeholder" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>`
+          : `<div class="pl-cover-placeholder"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>`
+        }
+      </div>
+      <div class="pl-info">
+        <div class="pl-title">${esc(t.title)||'<i style="color:var(--muted)">Không có tên</i>'}</div>
+        <div class="pl-artist">${esc(t.artist)||'—'}</div>
+        <div class="pl-src">${esc(t.src)}</div>
+      </div>
+      <div class="pl-edit-fields">
+        <input class="pl-edit-input" data-field="title" value="${esc(t.title)}" placeholder="Tên bài"/>
+        <input class="pl-edit-input" data-field="artist" value="${esc(t.artist)}" placeholder="Nghệ sĩ"/>
+        <input class="pl-edit-input" data-field="src" value="${esc(t.src)}" placeholder="music/file.mp3" style="flex:2;"/>
+        <input class="pl-edit-input" data-field="cover" value="${esc(t.cover)}" placeholder="Ảnh bìa (tuỳ chọn)" style="flex:2;"/>
+      </div>
+      <div class="pl-actions">
+        <button class="pl-btn" data-action="preview" data-idx="${i}" title="Preview">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="pl-btn" data-action="edit" data-idx="${i}" title="Chỉnh sửa">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </button>
+        <button class="pl-btn" data-action="save-edit" data-idx="${i}" title="Lưu chỉnh sửa" style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </button>
+        <button class="pl-btn del" data-action="del" data-idx="${i}" title="Xóa">
+          <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </button>
+      </div>
+    `;
+
+    // drag events
+    item.addEventListener('dragstart',e=>{ dragSrc=i; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    item.addEventListener('dragend',()=>{ item.classList.remove('dragging'); document.querySelectorAll('.pl-item').forEach(el=>el.classList.remove('drag-over')); });
+    item.addEventListener('dragover',e=>{ e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{
+      e.preventDefault(); item.classList.remove('drag-over');
+      if(dragSrc===null||dragSrc===i) return;
+      const moved = playlist.splice(dragSrc,1)[0];
+      playlist.splice(i,0,moved);
+      dragSrc=null; render(); updateStats();
+    });
+
+    // action buttons
+    item.querySelectorAll('[data-action]').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const action=btn.dataset.action, idx=+btn.dataset.idx;
+        if(action==='del'){
+          if(confirm(`Xóa "${playlist[idx].title}"?`)){
+            playlist.splice(idx,1); render(); updateStats(); toast('Đã xóa bài hát','ok');
+          }
+        }
+        if(action==='edit'){
+          item.classList.toggle('editing');
+          btn.style.display='none';
+          item.querySelector('[data-action="save-edit"]').style.display='';
+        }
+        if(action==='save-edit'){
+          item.querySelectorAll('.pl-edit-input').forEach(inp=>{
+            playlist[idx][inp.dataset.field]=inp.value.trim();
+          });
+          item.classList.remove('editing');
+          render(); updateStats(); toast('Đã cập nhật — nhớ bấm Lưu thay đổi!','ok');
+        }
+        if(action==='preview') previewTrack(idx);
+      });
+    });
+
+    list.appendChild(item);
+  });
+  updateStats();
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── ADD
+document.getElementById('addBtn').addEventListener('click',()=>{
+  const title=document.getElementById('fTitle').value.trim();
+  const artist=document.getElementById('fArtist').value.trim();
+  const src=document.getElementById('fSrc').value.trim();
+  const cover=document.getElementById('fCover').value.trim();
+  if(!title||!src){ toast('Nhập tên bài và đường dẫn file!','err'); return; }
+  playlist.push({title,artist,src,cover});
+  render();
+  document.getElementById('fTitle').value='';
+  document.getElementById('fArtist').value='';
+  document.getElementById('fSrc').value='';
+  document.getElementById('fCover').value='';
+  toast('Đã thêm: '+title+' — nhớ bấm Lưu thay đổi!');
+  // scroll to bottom
+  document.getElementById('plList').lastElementChild?.scrollIntoView({behavior:'smooth',block:'end'});
+});
+
+document.getElementById('clearForm').addEventListener('click',()=>{
+  ['fTitle','fArtist','fSrc','fCover'].forEach(id=>document.getElementById(id).value='');
+});
+
+// ── SAVE
+document.getElementById('saveBtn').addEventListener('click', savePlaylist);
+
+// ── CLEAR ALL
+document.getElementById('clearAllBtn').addEventListener('click',()=>{
+  if(confirm('Xóa hết tất cả bài hát trong playlist?')){
+    playlist=[]; render(); toast('Đã xóa hết','ok');
+  }
+});
+
+// ── PREVIEW PLAYER
+const audio = new Audio(); audio.volume=0.8;
+let prevIdx=null, prevPlaying=false, prevRaf=null;
+
+function previewTrack(i){
+  prevIdx=i;
+  const t=playlist[i];
+  audio.src=t.src;
+  document.getElementById('prevTitle').textContent=t.title;
+  document.getElementById('prevArtist').textContent=t.artist;
+  const art=document.getElementById('prevArt');
+  if(t.cover){ art.src=t.cover; art.style.display=''; } else { art.style.display='none'; }
+  audio.play().catch(()=>{});
+}
+
+function fmtS(s){ if(!isFinite(s))return'0:00'; return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+
+audio.addEventListener('play',()=>{
+  prevPlaying=true;
+  document.getElementById('pvPlay').style.display='none';
+  document.getElementById('pvPause').style.display='';
+  tickPrev();
+});
+audio.addEventListener('pause',()=>{
+  prevPlaying=false;
+  document.getElementById('pvPlay').style.display='';
+  document.getElementById('pvPause').style.display='none';
+  cancelAnimationFrame(prevRaf);
+});
+audio.addEventListener('ended',()=>{
+  if(prevIdx!==null) previewTrack((prevIdx+1)%playlist.length);
+});
+
+function tickPrev(){
+  if(!prevPlaying) return;
+  const c=audio.currentTime, d=audio.duration||0;
+  document.getElementById('prevFill').style.width=(d?c/d*100:0)+'%';
+  prevRaf=requestAnimationFrame(tickPrev);
+}
+
+document.getElementById('prevPlay').addEventListener('click',()=>{
+  if(!audio.src&&playlist.length) previewTrack(0);
+  else prevPlaying?audio.pause():audio.play().catch(()=>{});
+});
+document.getElementById('prevPrev').addEventListener('click',()=>{ if(prevIdx!==null) previewTrack((prevIdx-1+playlist.length)%playlist.length); });
+document.getElementById('prevNext').addEventListener('click',()=>{ if(prevIdx!==null) previewTrack((prevIdx+1)%playlist.length); });
+document.getElementById('prevBar').addEventListener('click',e=>{
+  if(!audio.duration) return;
+  const r=document.getElementById('prevBar').getBoundingClientRect();
+  audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
+});
+
+// Enter key shortcuts on form
+['fTitle','fArtist','fSrc','fCover'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('addBtn').click(); });
+});
+
+// ── INIT
+function init(){
+  loadPlaylist();
+  render();
+  updateStats();
+}
+</script>
+</body>
+</html>
