@@ -536,9 +536,9 @@
 const USER_ID    = '1131176637501804544';
 const DISCORD_INVITE = 'https://discord.gg/your-invite'; // ← đổi link invite server Discord của bạn
 const GITHUB_URL     = 'https://github.com/';            // ← đổi link GitHub
-const PLAYLIST = [
-  // Thêm nhạc vào đây:
-  // { title: 'Tên bài', artist: 'Nghệ sĩ', src: 'music/ten-bai.mp3', cover: 'music/cover.jpg' },
+// Playlist: đọc từ localStorage (quản lý bởi admin.html), fallback về default
+const _saved = localStorage.getItem('__playlist');
+const PLAYLIST = _saved ? JSON.parse(_saved) : [
   { title: 'Tell Em - Instrumental', artist: 'Cochise', src: 'music/tell-em.mp3', cover: '' },
 ];
 // ════════════════════════════════════════
