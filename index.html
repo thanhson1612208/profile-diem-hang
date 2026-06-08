@@ -3,34 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herin38 Pixel Portfolio</title>
+    <title>Herin38 Mini Pixel Portfolio</title>
+    <!-- Nhúng font Pixel -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Tùy chỉnh font cho toàn trang */
+        /* Tùy chỉnh font và Chèn link ảnh nền của bạn ở đây */
         body {
             font-family: 'VT323', monospace;
-            image-rendering: pixelated; /* Giúp ảnh không bị mờ */
+            image-rendering: pixelated; 
             background-color: #0D1117;
-            /* Tạo grid nền chấm chấm mờ */
-            background-image: 
-                radial-gradient(#1a1a1a 1px, transparent 1px);
-            background-size: 10px 10px;
+            
+            /* CHÈN LINK ẢNH NỀN VÀO ĐÂY */
+            background-image: url('https://i.pinimg.com/originals/8c/ec/0b/8cec0b4712497f1f0e470b1356f642be.gif'); 
+            
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Giữ ảnh nền cố định khi cuộn trang */
         }
+        
         h1, h2, h3, .pixel-btn {
             font-family: 'Press Start 2P', cursive;
         }
 
         /* Hiệu ứng pixel border bằng shadow */
         .pixel-card {
-            background-color: #161B22;
+            background-color: rgba(22, 27, 34, 0.95); /* Thêm chút trong suốt để nhìn thấy ảnh nền phía sau */
             border: 2px solid #000;
-            border-radius: 0; /* Bo góc bằng 0 */
-            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5); /* Tạo shadow khối vuông */
+            border-radius: 0; 
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5); 
         }
 
         .pixel-btn {
-            background-color: #9146FF; /* Tím Twitch */
+            background-color: #9146FF; 
             border: 2px solid #000;
             color: #000;
             border-radius: 0;
@@ -50,64 +56,73 @@
         }
     </style>
 </head>
-<body class="text-[#E0E0E0] antialiased">
+<body class="text-[#E0E0E0] antialiased min-h-screen flex items-center justify-center py-10">
 
-    <div class="max-w-3xl mx-auto p-6 md:p-10 space-y-12">
+    <!-- KHUNG XƯƠNG ĐÃ THU NHỎ (max-w-xl giúp giao diện thon gọn giống profile hơn) -->
+    <div class="w-full max-w-xl mx-auto px-4 space-y-8">
 
-        <header class="pixel-card p-6 flex flex-col md:flex-row items-center gap-6">
-            <img src="https://via.placeholder.com/150/pixel.png" alt="Herin38 Avatar" class="pixel-avatar w-32 h-32 md:w-40 md:h-40 bg-[#1e293b]" style="image-rendering: pixelated;">
+        <!-- Header Section -->
+        <header class="pixel-card p-6 flex flex-col sm:flex-row items-center gap-6">
+            <!-- Avatar -->
+            <img src="https://i.imgur.com/zk0mFIB.jpeg" alt="Dhendgs1tg Avatar" class="pixel-avatar w-28 h-28 sm:w-32 sm:h-32 bg-[#1e293b]" style="image-rendering: pixelated;">
             
-            <div class="flex-grow text-center md:text-left space-y-3">
-                <h1 class="text-3xl md:text-4xl text-[#9146FF] tracking-tight">Herin38</h1>
-                <p class="text-sm text-[#888]">herin_38 • 1 doi liem khien😎</p>
-                <p class="text-lg">Kẻ Sáng Tạo Pixel | Roblox VN</p>
+            <div class="flex-grow text-center sm:text-left space-y-2">
+                <h1 class="text-2xl text-[#9146FF] tracking-tight">bumiudexsty</h1>
+                <p class="text-xs text-[#888]">dim hen bel • 1 doi liem khiet🔥</p>
+                <p class="text-base">Thợ Săn Phú Bà | COSER VN</p>
                 
-                <div class="flex gap-2 justify-center md:justify-start pt-2">
-                    <a href="#" class="px-4 py-2 border-2 border-black/30 hover:bg-[#1a2234] text-sm">Twitch</a>
-                    <a href="#" class="px-4 py-2 border-2 border-black/30 hover:bg-[#1a2234] text-sm">GitHub</a>
+                <div class="flex gap-2 justify-center sm:justify-start pt-1">
+                    <a href="#" class="px-3 py-1 border-2 border-black/30 hover:bg-[#1a2234] text-xs">Twitch</a>
+                    <a href="#" class="px-3 py-1 border-2 border-black/30 hover:bg-[#1a2234] text-xs">GitHub</a>
                 </div>
             </div>
         </header>
 
-        <section class="pixel-card p-8 border-4 border-[#9146FF] space-y-6">
+        <!-- Spotlight Project Section -->
+        <section class="pixel-card p-6 border-4 border-[#9146FF] space-y-4">
             <div class="flex items-center justify-between gap-4">
-                <h2 class="text-2xl text-[#9146FF]">Đang Stream Twitch</h2>
-                <div class="w-8 h-8 bg-[#9146FF]/30 border-2 border-[#9146FF] rounded-0"></div>
+                <h2 class="text-sm text-[#9146FF]">Đang Ôn Thi</h2>
+                <div class="w-6 h-6 bg-[#9146FF]/30 border-2 border-[#9146FF]"></div>
             </div>
 
-            <div class="flex flex-col md:flex-row items-center gap-6">
-                <div class="w-full md:w-1/3 aspect-video bg-[#1e293b] border-2 border-black"></div>
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <!-- Project Preview -->
+                <div class="w-full sm:w-1/3 aspect-video bg-[#1e293b] border-2 border-black"></div>
                 
-                <div class="w-full md:w-2/3 space-y-3">
-                    <p class="text-xl text-white">Project: Pixelverse Explorer</p>
-                    <p class="text-[#ccc]">Khám phá thế giới pixel 8-bit với boss khổng lồ và item ẩn. Code bằng Unity/C#.</p>
-                    <a href="#" class="pixel-btn px-6 py-2 text-sm inline-block">XEM NGAY <span class="ml-2">>></span></a>
+                <div class="w-full sm:w-2/3 space-y-2">
+                    <p class="text-lg text-white">Pixelverse Explorer</p>
+                    <p class="text-sm text-[#ccc]">Siêu Cấp Đẹp Gái.</p>
+                    <a href="#" class="pixel-btn px-4 py-1 text-xs inline-block">XEM NGAY >></a>
                 </div>
             </div>
         </section>
 
-        <section class="space-y-6">
-            <h2 class="text-xl text-[#5ED2FF]">The Vault: Dự Án Khác</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="pixel-card p-6 space-y-3 transition-colors hover:bg-[#1a2234]">
-                    <h3 class="text-lg text-white">Roblox VN Helper Bot</h3>
-                    <p class="text-sm text-[#aaa]">Discord bot hỗ trợ kiểm tra server, stats người chơi.</p>
-                    <div class="flex gap-2 text-xs text-[#5ED2FF]">
-                        <span>Node.js</span> <span>/</span> <span>discord.js</span>
+        <!-- Other Projects (Bento Grid Style) -->
+        <section class="space-y-4">
+            <h2 class="text-sm text-[#5ED2FF]">The Vault: Dự Án Khác</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Card 1 -->
+                <div class="pixel-card p-4 space-y-2 transition-colors hover:bg-[#1a2234]">
+                    <h3 class="text-base text-white">Roblox Helper</h3>
+                    <p class="text-xs text-[#aaa]">Discord bot hỗ trợ kiểm tra server.</p>
+                    <div class="flex gap-2 text-[10px] text-[#5ED2FF]">
+                        <span>Node.js</span>
                     </div>
                 </div>
-                <div class="pixel-card p-6 space-y-3 transition-colors hover:bg-[#1a2234]">
-                    <h3 class="text-lg text-white">Pixel UI Kit</h3>
-                    <p class="text-sm text-[#aaa]">Bộ giao diện 8-bit cho các dev game Unity.</p>
-                    <div class="flex gap-2 text-xs text-[#5ED2FF]">
-                        <span>Design</span> <span>/</span> <span>Pixel Art</span>
+                <!-- Card 2 -->
+                <div class="pixel-card p-4 space-y-2 transition-colors hover:bg-[#1a2234]">
+                    <h3 class="text-base text-white">Pixel UI Kit</h3>
+                    <p class="text-xs text-[#aaa]">Bộ giao diện 8-bit cho dev game.</p>
+                    <div class="flex gap-2 text-[10px] text-[#5ED2FF]">
+                        <span>Pixel Art</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="pixel-card p-6 text-center text-sm text-[#888]">
-            <p>© 2026 Herin38 Pixelverse. Built with <span class="text-red-500">♥</span> and a custom `box-shadow` config.</p>
+        <!-- Footer -->
+        <footer class="pixel-card p-4 text-center text-xs text-[#888]">
+            <p>© 2026 Herin38 Pixelverse.</p>
             <a href="mailto:contact@herin38.dev" class="text-[#5ED2FF] hover:underline">contact@herin38.dev</a>
         </footer>
 
